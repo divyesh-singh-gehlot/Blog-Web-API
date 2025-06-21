@@ -1,14 +1,20 @@
-const { User } = require("../models")
-const { validationResult } = require('express-validator');
+const { User } = require("../models");
+const hashPassword = require("../utils/hashPassword");
 
 const signup = async (req, res, next) => {
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        
         const { name, email, password, role } = req.body;
-        const newUser = new User({ name, email, password, role });
+        const isEmailExists = await User.findOne({email});
+        
+        if(isEmailExists){
+            res.code = 400;
+            throw new Error('Email already exists.')
+        }
+
+        const hashedPassword = await hashPassword(password);
+        
+        const newUser = new User({ name, email, password: hashedPassword, role });
 
         await newUser.save();
 
