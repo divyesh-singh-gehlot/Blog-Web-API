@@ -21,5 +21,12 @@ const signinValidator = [
         .isLength({ min: 6 }).withMessage("Password should be at least 6 characters long."),
 ];
 
+const emailValidator = [
+    check("email")
+        .notEmpty().withMessage("Email is required.")
+        .bail()
+        .isEmail().withMessage("Invalid email address.")
+];
 
-module.exports = { signupValidator, signinValidator };
+
+module.exports = { signupValidator, signinValidator , emailValidator};

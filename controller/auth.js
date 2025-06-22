@@ -1,7 +1,10 @@
 const { User } = require("../models");
 const comparePassword = require("../utils/comparePassword");
+const generateCode = require("../utils/generateCode");
 const generateToken = require("../utils/generateToken");
 const hashPassword = require("../utils/hashPassword");
+const sendEmail = require("../utils/sendEmail");
+
 
 
 const signup = async (req, res, next) => {
@@ -54,7 +57,41 @@ const signin = async (req,res,next) => {
     }
 }
 
+const verifyCode = async (req, res, next) => {
+    try {
+        const {email} = req.body;
+        const user = await User.findOne({email});
+
+        if(!user){
+            res.code = 404;
+            throw new Error("User not Found!");
+        }
+
+        if(user.isVerified){
+            res.code = 404;
+            throw new Error("User is already Verified!")
+        }
+
+        const code = generateCode(6);
+        user.verificationCode = code;
+        await user.save();
+
+        await sendEmail({
+            emailTo: user.email,
+            subject: "Blog app - Email Verification code",
+            code,
+            content:"verify your account"
+        })
+
+        res.status(200).json({code:200, status:true, msg:"Verification code sent successfully!"})
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     signup,
-    signin
+    signin,
+    verifyCode
 }
