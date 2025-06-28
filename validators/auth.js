@@ -28,5 +28,13 @@ const emailValidator = [
         .isEmail().withMessage("Invalid email address.")
 ];
 
+const verifyUserValidator = [
+    check("email")
+        .notEmpty().withMessage("Email is required.")
+        .bail()
+        .isEmail().withMessage("Invalid email address."),
+    check("code")
+    .notEmpty().withMessage("Code is required")
+];
 
-module.exports = { signupValidator, signinValidator , emailValidator};
+module.exports = { signupValidator, signinValidator , emailValidator, verifyUserValidator};

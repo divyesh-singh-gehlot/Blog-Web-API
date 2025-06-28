@@ -90,8 +90,35 @@ const verifyCode = async (req, res, next) => {
     }
 }
 
+const verifyUser = async (req, res, next) => {
+    try {
+        const {email, code} = req.body;
+        const user = await User.findOne({email});
+
+        if(!user){
+            res.code = 404;
+            throw new Error("No user Found");
+        }
+
+        if(user.verificationCode !== code){
+            res.code = 400;
+            throw new Error("Invalid Verification Code");
+        }
+
+        user.isVerified = true;
+        user.verificationCode = null;
+        await user.save();
+
+        res.status(200).json({code:200, status:true, message:"User Verified Successfully!"})
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     signup,
     signin,
-    verifyCode
+    verifyCode,
+    verifyUser
 }
