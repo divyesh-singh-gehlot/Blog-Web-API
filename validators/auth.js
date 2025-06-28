@@ -37,4 +37,16 @@ const verifyUserValidator = [
     .notEmpty().withMessage("Code is required")
 ];
 
-module.exports = { signupValidator, signinValidator , emailValidator, verifyUserValidator};
+const recoverPasswordValidator = [
+    check("email")
+        .notEmpty().withMessage("Email is required.")
+        .bail()
+        .isEmail().withMessage("Invalid email address."),
+    check("code")
+    .notEmpty().withMessage("Code is required"),
+    check("newPassword")
+        .notEmpty().withMessage("Password is required.")
+        .isLength({ min: 6 }).withMessage("Password should be at least 6 characters long.")
+];
+
+module.exports = { signupValidator, signinValidator , emailValidator, verifyUserValidator, recoverPasswordValidator};
