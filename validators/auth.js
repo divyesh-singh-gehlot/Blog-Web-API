@@ -49,4 +49,9 @@ const recoverPasswordValidator = [
         .isLength({ min: 6 }).withMessage("Password should be at least 6 characters long.")
 ];
 
-module.exports = { signupValidator, signinValidator , emailValidator, verifyUserValidator, recoverPasswordValidator};
+const changePasswordValidator = [
+    check("oldPassword").notEmpty().withMessage("Old Password is required"),
+    check("newPassword").notEmpty().withMessage("New Password is required"),
+];
+
+module.exports = { signupValidator, signinValidator , emailValidator, verifyUserValidator, recoverPasswordValidator, changePasswordValidator};
