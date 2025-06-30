@@ -16,7 +16,9 @@ router.post("/forgot-password-code", emailValidator , validate , authController.
 router.post("/recover-password", recoverPasswordValidator , validate , authController.recoverPassword);
 
 
-router.put("/change-password", changePasswordValidator , validate , isAuth ,authController.changePassword)
+router.put("/change-password", changePasswordValidator , validate , isAuth ,authController.changePassword);
+
+router.put("/update-profile", emailValidator , validate , isAuth , authController.updateProfile);
 
 
 module.exports = router;
