@@ -1,32 +1,63 @@
 const { User, Category } = require("../models");
 
 const addCategory = async (req, res, next) => {
-    const {title , description} = req.body;
-    const {_id} = req.user;
-    
-    const isCategory = Category.findOne({title});
+    try {
+        const { title, description } = req.body;
+        const { _id } = req.user;
 
-    if(!isCategory){
+        const isCategory = await Category.findOne({ title });
+
+        if (isCategory) {
+            res.code = 404;
+            throw new Error("Category already exists.");
+        }
+
+        const user = await User.findById(_id);
+
+        if (!user) {
+            res.code = 400;
+            throw new Error("User not found!");
+        }
+
+        const newCategory = new Category({ title, description, updatedBy: _id });
+
+        await newCategory.save();
+
+        res.status(200).json({ code: 200, status: true, message: "Category added Seccessfully!" });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const updateCategory = async (req, res, next) => {
+    const {id} = req.params;
+    const { _id } = req.user;
+    const { title, description } = req.body;
+
+    const category = await Category.findById(id);
+
+    if (!category) {
         res.code = 404;
-        throw new Error("Category already exists.");
+        throw new Error("No such category found!");
     }
 
-    const user = User.findById(_id);
+    const isCategory = await Category.findOne({title});
 
-    if(!user){
+    if(isCategory && String(isCategory._id) !== String(category._id)){
         res.code = 400;
-        throw new Error("User not found!");
+        throw new Error("Title already Exists!");
     }
 
-    const newCategory = new Category({title, description, updatedby:_id});
+    category.title = title ? title : category.title;
+    category.description = description;
+    await category.save();
 
-    await newCategory.save();
-
-    res.status(200).json({code:200, status:true, message:"Category added Seccessfully!"});
+    res.status(200).json({code:200, status:true, message:"Category updated Successfully!", data:{category}})
 }
 
 
 
-modules.exports = {
-    addCategory
+module.exports = {
+    addCategory,
+    updateCategory
 }

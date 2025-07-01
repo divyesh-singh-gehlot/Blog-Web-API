@@ -7,4 +7,4 @@ const isAdmin = async (req, res, next) => {
     }
 }
 
-modules.exports = isAdmin;
+module.exports = isAdmin;
