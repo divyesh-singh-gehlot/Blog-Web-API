@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan")
 dotenv.config();
 const connectDb = require("./init/mongoDb");
-const { authRoute } = require("./routes");
+const { authRoute , categoryRoute} = require("./routes");
 const {errorHandler} = require("./middlewares")
 
 //init app
@@ -20,6 +20,7 @@ app.use(morgan("dev"));
 
 //Routes
 app.use("/api/v1/auth", authRoute)
+app.use("/api/v1/category", categoryRoute)
 
 //Error Handling Middleware
 app.use(errorHandler);

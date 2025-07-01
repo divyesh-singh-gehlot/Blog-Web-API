@@ -6,7 +6,6 @@ const hashPassword = require("../utils/hashPassword");
 const sendEmail = require("../utils/sendEmail");
 
 
-
 const signup = async (req, res, next) => {
     try {
         
