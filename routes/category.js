@@ -12,5 +12,7 @@ router.put("/:id", isAuth, isAdmin, idValidator , validate , categoryController.
 
 router.delete("/:id", isAuth, isAdmin , categoryController.deleteCategory);
 
+router.get("/", isAuth, categoryController.getCategory);
+
 
 module.exports = router;
