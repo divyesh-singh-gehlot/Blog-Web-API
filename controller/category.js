@@ -75,8 +75,12 @@ const deleteCategory = async (req, res, next) => {
 
 const getCategory = async (req, res, next) => {
     try {
-        const {q} = req.query;
+        const {q, size, page} = req.query;
         let query = {};
+
+        const sizeNumber = size ? parseInt(size) : 10;
+        const pageNumber = page ? parseInt(page) : 1;
+
         if (q) {
             const search = RegExp(q, "i");
             query = {
@@ -86,7 +90,11 @@ const getCategory = async (req, res, next) => {
                 ]
             };
         }
-        const categories = await Category.find(query);
+
+        const totalCategories = await Category.countDocuments(query);
+        const totalPages = Math.ceil(totalCategories / sizeNumber);
+        
+        const categories = await Category.find(query).skip((pageNumber - 1) * sizeNumber).limit(sizeNumber).sort({ createdAt: -1 });
 
         res.status(200).json({ code: 200, status: true, message: "Categories fetched successfully!", data: { categories } });
     } catch (error) {
