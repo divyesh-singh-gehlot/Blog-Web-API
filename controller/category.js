@@ -102,7 +102,6 @@ const getCategories = async (req, res, next) => {
     }
 }
 
-
 const getCategory = async (req, res, next) => {
     try {
         const { id } = req.params;
