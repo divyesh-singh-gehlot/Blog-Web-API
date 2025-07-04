@@ -1,4 +1,4 @@
-const {PutObjectCommand, S3Client , GetObjectCommand} = require("@aws-sdk/client-s3");
+const {PutObjectCommand, S3Client , GetObjectCommand, DeleteObjectCommand} = require("@aws-sdk/client-s3");
 const {awsAccessKey , awsSecretAccessKey , awsRegion , awsBucketName} = require("../config/keys");
 const generateCode = require("./generateCode");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
@@ -27,14 +27,15 @@ const uploadFileToS3 = async ({file, ext}) => {
         await client.send(command);
         return Key;
     } catch (error) {
-        console.log(error);
+        console.error("Error uploading object:", error);
+        throw new Error("Failed to upload Object.");
     }
 }
 
-const signedUrl = async (key) => {
+const signedUrl = async (Key) => {
     const params = {
         Bucket: awsBucketName,
-        Key: key, // ✅ Capitalized 'Key'
+        Key
     };
 
     const command = new GetObjectCommand(params);
@@ -48,7 +49,25 @@ const signedUrl = async (key) => {
     }
 }
 
+const deleteFileFromS3 = async (Key) => {
+    const params = {
+        Bucket:awsBucketName,
+        Key
+    }
+
+    const command = new DeleteObjectCommand(params);
+
+    try {
+        await client.send(command);
+        return;
+    } catch (error) {
+        console.error("Error deleting object:", error);
+        throw new Error("Failed to delete Object.");
+    }
+}
+
 module.exports = {
     uploadFileToS3,
-    signedUrl
+    signedUrl,
+    deleteFileFromS3
 }
