@@ -1,4 +1,5 @@
 const { check } = require("express-validator");
+const { mongoose } = require("mongoose");
 
 const signupValidator = [
     check("name").notEmpty().withMessage("Name is required."),
@@ -34,7 +35,7 @@ const verifyUserValidator = [
         .bail()
         .isEmail().withMessage("Invalid email address."),
     check("code")
-    .notEmpty().withMessage("Code is required")
+        .notEmpty().withMessage("Code is required")
 ];
 
 const recoverPasswordValidator = [
@@ -43,7 +44,7 @@ const recoverPasswordValidator = [
         .bail()
         .isEmail().withMessage("Invalid email address."),
     check("code")
-    .notEmpty().withMessage("Code is required"),
+        .notEmpty().withMessage("Code is required"),
     check("newPassword")
         .notEmpty().withMessage("Password is required.")
         .isLength({ min: 6 }).withMessage("Password should be at least 6 characters long.")
@@ -54,4 +55,17 @@ const changePasswordValidator = [
     check("newPassword").notEmpty().withMessage("New Password is required"),
 ];
 
-module.exports = { signupValidator, signinValidator , emailValidator, verifyUserValidator, recoverPasswordValidator, changePasswordValidator};
+const updateProfileValidator = [
+    check("email")
+        .notEmpty().withMessage("Email is required.")
+        .bail()
+        .isEmail().withMessage("Invalid email address."),
+
+    check("profilePic").custom(async (profilePic) => {
+        if(profilePic && !mongoose.Types.ObjectId.isValid(profilePic)){
+            throw "Invalid Profile Picture";
+        }
+    })
+];
+
+module.exports = { signupValidator, signinValidator, emailValidator, verifyUserValidator, recoverPasswordValidator, changePasswordValidator ,updateProfileValidator};

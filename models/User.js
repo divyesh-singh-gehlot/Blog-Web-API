@@ -10,7 +10,8 @@ const userSchema = mongoose.Schema({
     //Role: 3 -> Normal user
     isVerified : {type: Boolean, default: false},
     verificationCode : {type: String, default: null},
-    forgotPasswordCode : {type: String, default: null}
+    forgotPasswordCode : {type: String, default: null},
+    profilePic : {type: mongoose.Types.ObjectId , ref:"file"}
 });
 
 const User = mongoose.model("user", userSchema);
