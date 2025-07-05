@@ -95,8 +95,58 @@ const deletePost = async (req, res, next) => {
     }
 }
 
+const getPosts = async (req, res, next) => {
+    try {
+        const {q, size, page , category} = req.query;
+        
+        let query = {};
+        const sizeNumber = size ? parseInt(size) : 10;
+        const pageNumber = page ? parseInt(page) : 1;
+
+        if (q) {
+            const search = RegExp(q, "i");
+            query = {
+                $or: [
+                    { title: search }
+                ]
+            };
+        }
+
+        if(category){
+            query = {...query , category};
+        }
+
+        const totalPosts = await Post.countDocuments(query);
+        const totalPages = Math.ceil(totalPosts / sizeNumber);
+        
+        const posts = await Post.find(query).populate("file").populate("category").populate("updatedby", "-password -verificationCode -forgotPasswordCode").skip((pageNumber - 1) * sizeNumber).limit(sizeNumber).sort({ createdAt: -1 });
+
+        res.status(200).json({ code: 200, status: true, message: "Posts fetched successfully!", data: { posts , totalPages , totalPosts } });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getPost = async (req , res , next) => {
+    try {
+        const {id} = req.params;
+
+        const post = await Post.findById(id).populate("file").populate("category").populate("updatedby", "-password -verificationCode -forgotPasswordCode");
+
+        if(!post){
+            res.code = 404;
+            throw new Error("Post not found!");
+        }
+        res.status(200).json({code:200, status:true, message:"Post fetched successfully!" , data:{post}});
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     addPost,
     updatePost,
-    deletePost
+    deletePost,
+    getPosts,
+    getPost
 }
