@@ -23,7 +23,7 @@ const addCategory = async (req, res, next) => {
 
         await newCategory.save();
 
-        res.status(200).json({ code: 200, status: true, message: "Category added Seccessfully!" });
+        res.status(200).json({ code: 200, status: true, message: "Category added Successfully!" });
     } catch (error) {
         next(error);
     }
@@ -78,7 +78,7 @@ const getCategories = async (req, res, next) => {
         const {q, size, page} = req.query;
         let query = {};
 
-        const sizeNumber = size ? parseInt(size) : 10;
+        const sizeNumber = size ? parseInt(size) : 6;
         const pageNumber = page ? parseInt(page) : 1;
 
         if (q) {
@@ -94,9 +94,9 @@ const getCategories = async (req, res, next) => {
         const totalCategories = await Category.countDocuments(query);
         const totalPages = Math.ceil(totalCategories / sizeNumber);
         
-        const categories = await Category.find(query).skip((pageNumber - 1) * sizeNumber).limit(sizeNumber).sort({ createdAt: -1 });
+        const categories = await Category.find(query).populate("updatedBy", "-password -verificationCode -forgotPasswordCode").skip((pageNumber - 1) * sizeNumber).limit(sizeNumber).sort({ createdAt: -1 });
 
-        res.status(200).json({ code: 200, status: true, message: "Categories fetched successfully!", data: { categories } });
+        res.status(200).json({ code: 200, status: true, message: "Categories fetched successfully!", data: { categories , totalCount:totalCategories , pages:totalPages } });
     } catch (error) {
         next(error);
     }

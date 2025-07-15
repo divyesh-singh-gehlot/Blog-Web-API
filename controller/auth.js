@@ -33,7 +33,7 @@ const signup = async (req, res, next) => {
 const signin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("-forgotPasswordCode -verificationCode");
 
         if (!user) {
             res.code = 401;
@@ -47,9 +47,11 @@ const signin = async (req, res, next) => {
             throw new Error("Invalid Email or Password")
         }
 
+        user.password = undefined;
+
         const token = generateToken(user);
 
-        res.status(200).json({ code: 200, status: true, message: "Sign in Successful!", data: { token } })
+        res.status(200).json({ code: 200, status: true, message: "Sign in Successful!", data: { token , user } })
 
     } catch (error) {
         next(error);

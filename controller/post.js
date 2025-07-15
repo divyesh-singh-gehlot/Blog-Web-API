@@ -79,7 +79,7 @@ const deletePost = async (req, res, next) => {
     try {
         const {id} = req.params;
         
-        const post = Post.findById(id);
+        const post = await Post.findById(id);
         
         if(!post){
             res.code = 404;
@@ -100,7 +100,7 @@ const getPosts = async (req, res, next) => {
         const {q, size, page , category} = req.query;
         
         let query = {};
-        const sizeNumber = size ? parseInt(size) : 10;
+        const sizeNumber = size ? parseInt(size) : 6;
         const pageNumber = page ? parseInt(page) : 1;
 
         if (q) {
@@ -119,7 +119,7 @@ const getPosts = async (req, res, next) => {
         const totalPosts = await Post.countDocuments(query);
         const totalPages = Math.ceil(totalPosts / sizeNumber);
         
-        const posts = await Post.find(query).populate("file").populate("category").populate("updatedby", "-password -verificationCode -forgotPasswordCode").skip((pageNumber - 1) * sizeNumber).limit(sizeNumber).sort({ createdAt: -1 });
+        const posts = await Post.find(query).populate("file").populate("category").populate("updatedby", "-password -verificationCode -forgotPasswordCode").skip((pageNumber - 1) * sizeNumber).limit(sizeNumber).sort({ updatedAt: -1 });
 
         res.status(200).json({ code: 200, status: true, message: "Posts fetched successfully!", data: { posts , totalPages , totalPosts } });
     } catch (error) {
@@ -143,10 +143,60 @@ const getPost = async (req , res , next) => {
     }
 }
 
+const getTopContributors = async (req, res, next) => {
+  try {
+    const topContributors = await Post.aggregate([
+      {
+        $group: {
+          _id: "$updatedby",
+          postCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { postCount: -1 },
+      },
+      {
+        $limit: 5,
+      },
+      {
+        $lookup: {
+          from: "users", // Replace with actual collection name if different
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: "$user._id",
+          name: "$user.name",
+          email: "$user.email",
+          postCount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "Top contributors fetched successfully!",
+      data: topContributors,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 module.exports = {
     addPost,
     updatePost,
     deletePost,
     getPosts,
-    getPost
+    getPost,
+    getTopContributors
 }

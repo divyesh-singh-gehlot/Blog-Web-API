@@ -6,11 +6,11 @@ const validate = require("../validators/validate");
 const isAuth = require("../middlewares/isAuth");
 const isAdmin = require("../middlewares/isAdmin");
 
-router.post("/", isAuth, isAdmin , addCategoryValidator , validate , categoryController.addCategory);
+router.post("/", isAuth, addCategoryValidator , validate , categoryController.addCategory);
 
-router.put("/:id", isAuth, isAdmin, idValidator , validate , categoryController.updateCategory);
+router.put("/:id", isAuth, idValidator , validate , categoryController.updateCategory);
 
-router.delete("/:id", isAuth, isAdmin , categoryController.deleteCategory);
+router.delete("/:id", isAuth, categoryController.deleteCategory);
 
 router.get("/", isAuth, categoryController.getCategories);
 

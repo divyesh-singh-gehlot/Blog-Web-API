@@ -5,12 +5,15 @@ const { addPostValidator, updatePostValidator, idValidator } = require("../valid
 const validate = require("../validators/validate");
 const router = express.Router();
 
+router.get("/top-contributors", isAuth , postController.getTopContributors);
+
 router.get("/" , isAuth , postController.getPosts);
 router.post("/" , isAuth , addPostValidator , validate , postController.addPost);
 
 router.get("/:id" , isAuth , postController.getPost);
 router.put("/:id" , isAuth , updatePostValidator , idValidator , validate , postController.updatePost);
 router.delete("/:id" , isAuth , idValidator , validate , postController.deletePost);
+
 
 
 module.exports = router;
