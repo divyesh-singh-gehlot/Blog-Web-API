@@ -1,20 +1,62 @@
 const express = require("express");
 const { categoryController } = require("../controller");
-const router = express.Router();
-const {addCategoryValidator, idValidator} = require("../validators/category");
+const {
+  addCategoryValidator,
+  idValidator
+} = require("../validators/category");
 const validate = require("../validators/validate");
 const isAuth = require("../middlewares/isAuth");
 const isAdmin = require("../middlewares/isAdmin");
+const asyncHandler = require("../utils/asyncHandler"); // 👈 Handles async errors
 
-router.post("/", isAuth, addCategoryValidator , validate , categoryController.addCategory);
+const router = express.Router();
 
-router.put("/:id", isAuth, idValidator , validate , categoryController.updateCategory);
+// @route   POST /api/v1/categories
+// @desc    Add a new category
+router.post(
+  "/",
+  isAuth,
+  addCategoryValidator,
+  validate,
+  asyncHandler(categoryController.addCategory)
+);
 
-router.delete("/:id", isAuth, categoryController.deleteCategory);
+// @route   PUT /api/v1/categories/:id
+// @desc    Update a category by ID
+router.put(
+  "/:id",
+  isAuth,
+  idValidator,
+  validate,
+  asyncHandler(categoryController.updateCategory)
+);
 
-router.get("/", isAuth, categoryController.getCategories);
+// @route   DELETE /api/v1/categories/:id
+// @desc    Delete a category by ID
+router.delete(
+  "/:id",
+  isAuth,
+  idValidator,
+  validate,
+  asyncHandler(categoryController.deleteCategory)
+);
 
-router.get("/:id", isAuth, idValidator , validate , categoryController.getCategory);
+// @route   GET /api/v1/categories
+// @desc    Get all categories
+router.get(
+  "/",
+  isAuth,
+  asyncHandler(categoryController.getCategories)
+);
 
+// @route   GET /api/v1/categories/:id
+// @desc    Get a category by ID
+router.get(
+  "/:id",
+  isAuth,
+  idValidator,
+  validate,
+  asyncHandler(categoryController.getCategory)
+);
 
 module.exports = router;
