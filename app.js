@@ -16,7 +16,8 @@ connectDb();
 
 //Third-party Middlewares
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://blog-frontend-1-633e.onrender.com']
+  origin: ['http://localhost:5173', 'https://blog-frontend-1-633e.onrender.com'],
+  credentials: true,
 }))
 
 app.use(express.json({limit:"500mb"}));
