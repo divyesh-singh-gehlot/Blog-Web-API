@@ -7,6 +7,8 @@ dotenv.config();
 const connectDb = require("./init/mongoDb");
 const { authRoute , categoryRoute, fileRoute, postRoute} = require("./routes");
 const {errorHandler} = require("./middlewares");
+const session = require("express-session");
+const { sessionSecret } = require("./config/keys");
 
 //init app
 const app = express();
@@ -19,6 +21,17 @@ app.use(cors({
   origin: ['http://localhost:5173', 'https://notionary-5sn8.onrender.com'],
   credentials: true,
 }))
+
+app.use(session({
+  secret: sessionSecret, // use env var in production
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: true,            // ⚠️ Required for HTTPS (Render is HTTPS)
+    httpOnly: true,
+    sameSite: "none",        // ⚠️ REQUIRED for frontend/backend on different domains
+  }
+}));
 
 app.use(express.json({limit:"500mb"}));
 app.use(bodyParser.urlencoded({limit:"500mb", extended:true}));

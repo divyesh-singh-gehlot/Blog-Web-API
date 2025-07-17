@@ -1,4 +1,4 @@
-const { PORT, CONNECTION_URL, JWT_SECRET, SENDER_EMAIL, EMAIL_PASSWORD, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, AWS_REGION } = process.env;
+const { PORT, CONNECTION_URL, JWT_SECRET, SENDER_EMAIL, EMAIL_PASSWORD, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, AWS_REGION , SESSION_SECRET } = process.env;
 
 module.exports = {
     port: PORT,
@@ -9,5 +9,6 @@ module.exports = {
     awsAccessKey : AWS_ACCESS_KEY,
     awsSecretAccessKey : AWS_SECRET_ACCESS_KEY,
     awsBucketName : AWS_BUCKET_NAME,
-    awsRegion : AWS_REGION
+    awsRegion : AWS_REGION,
+    sessionSecret: SESSION_SECRET
 };
