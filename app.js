@@ -16,7 +16,7 @@ connectDb();
 
 //Third-party Middlewares
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://blog-frontend-1-633e.onrender.com'],
+  origin: ['http://localhost:5173', 'https://notionary-5sn8.onrender.com/'],
   credentials: true,
 }))
 
