@@ -147,7 +147,7 @@ const forgotPasswordCode = async (req, res, next) => {
 
 const recoverPassword = async (req, res, next) => {
     try {
-        const { email, code, newPassword } = req.body;
+        const { email, code, password } = req.body;
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -159,7 +159,7 @@ const recoverPassword = async (req, res, next) => {
             throw new Error("Invalid Code!");
         }
 
-        const hashedPassword = await hashPassword(newPassword);
+        const hashedPassword = await hashPassword(password);
 
         user.password = hashedPassword;
         await user.save();

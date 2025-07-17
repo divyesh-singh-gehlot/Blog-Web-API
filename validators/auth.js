@@ -45,7 +45,7 @@ const recoverPasswordValidator = [
         .isEmail().withMessage("Invalid email address."),
     check("code")
         .notEmpty().withMessage("Code is required"),
-    check("newPassword")
+    check("password")
         .notEmpty().withMessage("Password is required.")
         .isLength({ min: 6 }).withMessage("Password should be at least 6 characters long.")
 ];
